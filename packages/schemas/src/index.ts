@@ -5,3 +5,4 @@ export * from "./stockMove.js";
 export * from "./auth.js";
 export * from "./dashboard.js";
 export * from "./receipt.js";
+export * from "./delivery.js";
