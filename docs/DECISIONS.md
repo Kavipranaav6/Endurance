@@ -57,3 +57,14 @@ Log deviations from `docs/ARCHITECTURE.md` or `docs/PLAN.md` here.
   - Detail Inspector: Read-only modal displaying the complete append-only ledger entry metadata, timestamps, and immutable ledger verification stamp.
 - Pure Ledger Query Architecture: Strictly consumes the Phase 2 `ledger.listMoves` and `ledger.getMoveById` tRPC endpoints without writing redundant queries against `StockMove`.
 - Multi-Product Reference Expansion: Every product movement record in a multi-line document renders as a distinct, individually auditable ledger line item sharing the master reference number.
+
+## Phase 8 — Settings & Product Management
+- Layout choices (Approved):
+  - Master Data Console: Option 1 (Tabbed Master Data Console with Dense Tables) providing dedicated tabs for `Products`, `Warehouses`, `Locations`, and `Low Stock Alerts`, complete with instant search, category/warehouse filters, and inline actions.
+  - Modals & Form Groups: Option A (Stacked Compact FormGroups) for `ProductFormModal`, `WarehouseFormModal`, and `LocationFormModal` with inline validation, uppercase code normalization, and clear descriptive hints.
+  - Low-Stock Alert Indicator: Option 1 (Active Pill Badge `🚨 N Low Stock`) positioned in the primary top navigation bar, linking directly to the `#settings-alerts` view.
+- Ledger integration for Opening Stock:
+  - When creating a new product with `initialStock > 0`, `settingsRouter.createProduct` invokes Phase 2 `createStockMove` with `type: "IN"`, `initialState: "done"`, and contact `"Opening Balance / Initial Inventory Setup"`. This immediately seeds the append-only ledger and updates derived stock levels without manual receipts.
+- Real-time Alert Synchronization:
+  - Both the navigation pill badge and the `Low Stock Alerts` monitor listen directly to WebSocket events (`LOW_STOCK_ALERT`, `LEDGER_WRITE`, `STATE_TRANSITION`, `STOCK_MOVE_CREATED`, `STOCK_MOVE_UPDATED`), ensuring immediate live updating as stock levels change.
+

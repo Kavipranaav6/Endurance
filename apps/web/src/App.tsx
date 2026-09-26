@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "./lib/authStore";
+import { trpcCall } from "./lib/api";
+import { useStockWebSocket } from "./lib/useStockWebSocket";
 import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
@@ -8,6 +10,7 @@ import { ReceiptsPage } from "./pages/ReceiptsPage";
 import { DeliveriesPage } from "./pages/DeliveriesPage";
 import { TransfersPage } from "./pages/TransfersPage";
 import { MoveHistoryPage } from "./pages/MoveHistoryPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function App() {
@@ -16,10 +19,49 @@ export function App() {
     const hash = window.location.hash.replace("#", "");
     return hash || "dashboard";
   });
+  const [lowStockCount, setLowStockCount] = useState<number>(0);
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
+
+  // Fetch low stock summary for active pill badge
+  const fetchLowStockSummary = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const summary = await trpcCall<{ count: number }>(
+        "settings.getLowStockSummary",
+        "query"
+      );
+      setLowStockCount(summary?.count || 0);
+    } catch {
+      // quiet fallback
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchLowStockSummary();
+    }
+  }, [isAuthenticated, fetchLowStockSummary]);
+
+  // WebSocket real-time subscription for live alert updates
+  const handleWsEvent = useCallback(
+    (event: any) => {
+      if (
+        event.type === "LEDGER_WRITE" ||
+        event.type === "STATE_TRANSITION" ||
+        event.type === "LOW_STOCK_ALERT" ||
+        event.type === "STOCK_MOVE_CREATED" ||
+        event.type === "STOCK_MOVE_UPDATED"
+      ) {
+        fetchLowStockSummary();
+      }
+    },
+    [fetchLowStockSummary]
+  );
+
+  useStockWebSocket(handleWsEvent);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -39,7 +81,11 @@ export function App() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (isAuthenticated && (currentPage === "login" || currentPage === "signup" || currentPage === "forgot-password")) {
+      if (
+        isAuthenticated &&
+        (currentPage === "login" ||
+          currentPage === "signup" ||
+          currentPage === "forgot-password")) {
         navigate("dashboard");
       }
     }
@@ -115,11 +161,33 @@ export function App() {
                 >
                   Move History
                 </button>
+                <button
+                  onClick={() => navigate("settings")}
+                  className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                    currentPage.startsWith("settings")
+                      ? "bg-primary text-white"
+                      : "text-primary-muted hover:text-primary hover:bg-background-subtle"
+                  }`}
+                >
+                  Settings
+                </button>
               </nav>
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            {/* Live Low-Stock Alert Active Pill Badge (Option 1) */}
+            {isAuthenticated && lowStockCount > 0 && (
+              <button
+                onClick={() => navigate("settings-alerts")}
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-full hover:bg-status-danger/20 transition-all animate-pulse cursor-pointer shadow-xs"
+                title="Critical Low Stock Alert: Click to view items and reorder"
+              >
+                <span>🚨</span>
+                <span>{lowStockCount} Low Stock</span>
+              </button>
+            )}
+
             {!isLoading && (
               <>
                 {!isAuthenticated ? (
@@ -195,13 +263,24 @@ export function App() {
                 <MoveHistoryPage onNavigate={navigate} />
               </ProtectedRoute>
             )}
+            {currentPage.startsWith("settings") && (
+              <ProtectedRoute onRedirect={navigate}>
+                <SettingsPage
+                  key={currentPage}
+                  initialTab={
+                    currentPage === "settings-alerts" ? "alerts" : "products"
+                  }
+                  onNavigate={navigate}
+                />
+              </ProtectedRoute>
+            )}
           </>
         )}
       </main>
 
       <footer className="border-t border-border pt-4 text-xs text-primary-muted flex justify-between">
         <span>StockSense • Append-Only Ledger ERP</span>
-        <span>Phase 7 — Move History & Ledger Audit</span>
+        <span>Phase 8 — Settings & Product Management</span>
       </footer>
     </div>
   );

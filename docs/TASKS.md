@@ -60,10 +60,10 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Multi-product references expand into multiple rows correctly
 
 ## Phase 8 — Settings & Products
-- [ ] Warehouse CRUD (name, short code, address)
-- [ ] Location CRUD (name, short code, parent warehouse)
-- [ ] Product CRUD (name, SKU/code, category, unit of measure, initial stock, reorder rule)
-- [ ] Low-stock alert badge wired into nav + dashboard
+- [x] Warehouse CRUD (name, short code, address)
+- [x] Location CRUD (name, short code, parent warehouse)
+- [x] Product CRUD (name, SKU/code, category, unit of measure, initial stock, reorder rule)
+- [x] Low-stock alert badge wired into nav + dashboard
 
 ## Phase 9 — Polish & Deploy
 - [ ] Empty/loading/error states across all list views
