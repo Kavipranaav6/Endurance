@@ -6,6 +6,7 @@ import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ReceiptsPage } from "./pages/ReceiptsPage";
 import { DeliveriesPage } from "./pages/DeliveriesPage";
+import { TransfersPage } from "./pages/TransfersPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function App() {
@@ -93,6 +94,16 @@ export function App() {
                 >
                   Deliveries
                 </button>
+                <button
+                  onClick={() => navigate("transfers")}
+                  className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                    currentPage === "transfers"
+                      ? "bg-primary text-white"
+                      : "text-primary-muted hover:text-primary hover:bg-background-subtle"
+                  }`}
+                >
+                  Transfers & Adjustments
+                </button>
               </nav>
             )}
           </div>
@@ -163,13 +174,18 @@ export function App() {
                 <DeliveriesPage onNavigate={navigate} />
               </ProtectedRoute>
             )}
+            {currentPage === "transfers" && (
+              <ProtectedRoute onRedirect={navigate}>
+                <TransfersPage onNavigate={navigate} />
+              </ProtectedRoute>
+            )}
           </>
         )}
       </main>
 
       <footer className="border-t border-border pt-4 text-xs text-primary-muted flex justify-between">
         <span>StockSense • Append-Only Ledger ERP</span>
-        <span>Phase 5 — Delivery Orders & Outbound Dispatch</span>
+        <span>Phase 6 — Internal Transfers & Stock Adjustments</span>
       </footer>
     </div>
   );

@@ -40,3 +40,12 @@ Log deviations from `docs/ARCHITECTURE.md` or `docs/PLAN.md` here.
   - Row-Level Stock Warning: Option 1 (Dense ERP Inline Warning Tag) displaying exact free-to-use availability on each product line with amber/red deficit alert (`⚠️ Shortage: X on-hand (deficit: Y)`) preventing invalid dispatch.
 - Outbound Ledger writes: Outbound shipments strictly write immutable `OUT` moves through Phase 2 ledger engine (`createStockMove`, `transitionStockMove`), decrementing derived stock and broadcasting live WebSocket notifications upon validation.
 - Printable Delivery Note: Integrated packing slip template supporting `window.print()` with carrier and customer receipt sign-off blocks.
+
+## Phase 6 — Internal Transfers & Stock Adjustments
+- Layout choices (Approved):
+  - Internal Transfer Form: Option 1 (Linear/Odoo Dual Location Selector + Line Items) with Source Location `→` Destination Location picker, real-time source inventory validation, and `Draft → Ready → Done` lifecycle.
+  - Stock Adjustment Form: Option 1 (Inventory Count Sheet with Real-Time Delta Preview) allowing warehouse floor staff to enter physical counted quantities, previewing calculated discrepancy deltas (+/- units) with audit reasons before committing.
+  - Page Architecture: Unified tabbed screen with Internal Transfers (List / Kanban views) and Stock Adjustments audit log.
+- Ledger integration:
+  - Transfers: Strictly writes `INTERNAL` moves through Phase 2 ledger engine (`createStockMove`, `transitionStockMove`) with reference `<WH>/INT/<0001>`. The derived stock engine confirms company-wide inventory total is conserved while location bins update.
+  - Adjustments: Commits discrepancy deltas as immutable ledger `ADJUSTMENT` moves (`<WH>/ADJ/<0001>`), attributing surplus gains to `toLocationId` and deficit shrinkage to `fromLocationId`.
