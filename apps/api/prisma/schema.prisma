@@ -39,13 +39,14 @@ model User {
 }
 
 model Warehouse {
-  id        String     @id @default(uuid())
+  id        String              @id @default(uuid())
   name      String
-  shortCode String     @unique
+  shortCode String              @unique
   address   String?
   locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  sequences OperationSequence[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 }
 
 model Location {
@@ -73,6 +74,17 @@ model Product {
   stockMoves    StockMove[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+}
+
+model OperationSequence {
+  id           String        @id @default(uuid())
+  warehouseId  String
+  type         StockMoveType
+  lastSequence Int           @default(0)
+  warehouse    Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([warehouseId, type])
 }
 
 model StockMove {

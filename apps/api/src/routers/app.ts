@@ -1,5 +1,6 @@
 import { router, publicProcedure } from "../trpc.js";
 import { authRouter } from "./auth.js";
+import { ledgerRouter } from "./ledger.js";
 
 export const appRouter = router({
   health: publicProcedure.query(() => {
@@ -10,6 +11,7 @@ export const appRouter = router({
     };
   }),
   auth: authRouter,
+  ledger: ledgerRouter,
 });
 
 export type AppRouter = typeof appRouter;
