@@ -40,11 +40,11 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Status badge: Draft / Ready / Done
 
 ## Phase 5 — Delivery Orders
-- [ ] List + kanban, search by reference & contact
-- [ ] New delivery form: delivery address, schedule date, responsible, operation type
-- [ ] Row-level warning if a line's product isn't currently in stock
-- [ ] Validate → ledger OUT move created, stock decreases
-- [ ] Status badge: Draft / Waiting / Ready / Done
+- [x] List + kanban, search by reference & contact
+- [x] New delivery form: delivery address, schedule date, responsible, operation type
+- [x] Row-level warning if a line's product isn't currently in stock
+- [x] Validate → ledger OUT move created, stock decreases
+- [x] Status badge: Draft / Waiting / Ready / Done
 
 ## Phase 6 — Transfers & Adjustments
 - [ ] Internal transfer form (from-location → to-location, product, quantity)

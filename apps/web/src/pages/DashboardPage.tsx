@@ -199,7 +199,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             onNavigate("receipts");
           }}
           onNewDelivery={() => {
-            console.log("Quick action: New Delivery clicked");
+            onNavigate("deliveries");
           }}
         />
       </div>

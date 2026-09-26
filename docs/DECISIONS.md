@@ -31,3 +31,12 @@ Log deviations from `docs/ARCHITECTURE.md` or `docs/PLAN.md` here.
 - Ledger integration: All receipt creation and validation strictly route through Phase 2 ledger engine (`createStockMove` and `transitionStockMove`), guaranteeing immutability upon reaching `done` state and real-time broadcasting.
 - Multi-line receipt architecture: Multi-line inbound shipments share the atomic sequential reference (`<WarehouseShortCode>/IN/<0001>`) generated via Phase 2 `generateStockMoveReference`.
 - Printable Voucher: Integrated printable Goods Receipt Voucher (GRV) layout triggering cleanly via browser `window.print()` with sign-off inspection blocks.
+
+## Phase 5 — Delivery Orders
+- Layout choices (Approved):
+  - Table Row: Option 1 (Dense ERP Data Row) with 44px (h-11) height, monospace reference, customer/contact, picking source location, date, item/quantity counts, shortage indicator tag, and status pills.
+  - Kanban Card: Option 1 (Structured Header Card) with top accent border matching lifecycle state (`Draft`, `Waiting`, `Ready`, `Done`, `Cancelled`), customer name, source location, and real-time inventory shortage warning flag.
+  - New Delivery Form: Option 1 (Odoo/Linear Standard Header + Tabular Lines) with 2-column header (Customer, Delivery Address, Source Warehouse, Picking Location, Scheduled Date), dynamic line item management, and multi-step action bar (`Draft → Waiting → Ready → Done`).
+  - Row-Level Stock Warning: Option 1 (Dense ERP Inline Warning Tag) displaying exact free-to-use availability on each product line with amber/red deficit alert (`⚠️ Shortage: X on-hand (deficit: Y)`) preventing invalid dispatch.
+- Outbound Ledger writes: Outbound shipments strictly write immutable `OUT` moves through Phase 2 ledger engine (`createStockMove`, `transitionStockMove`), decrementing derived stock and broadcasting live WebSocket notifications upon validation.
+- Printable Delivery Note: Integrated packing slip template supporting `window.print()` with carrier and customer receipt sign-off blocks.
