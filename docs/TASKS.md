@@ -53,11 +53,11 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] System computes delta vs. recorded quantity and logs it as a ledger entry
 
 ## Phase 7 — Move History
-- [ ] Unified list of all ledger moves (reference, date, from, to, contact, quantity, status)
-- [ ] Kanban view toggle by status
-- [ ] Color coding: late (schedule date < today) = red, waiting = neutral/amber, done = green
-- [ ] Search by reference & contact
-- [ ] Multi-product references expand into multiple rows correctly
+- [x] Unified list of all ledger moves (reference, date, from, to, contact, quantity, status)
+- [x] Kanban view toggle by status
+- [x] Color coding: late (schedule date < today) = red, waiting = neutral/amber, done = green
+- [x] Search by reference & contact
+- [x] Multi-product references expand into multiple rows correctly
 
 ## Phase 8 — Settings & Products
 - [ ] Warehouse CRUD (name, short code, address)

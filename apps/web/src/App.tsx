@@ -7,6 +7,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { ReceiptsPage } from "./pages/ReceiptsPage";
 import { DeliveriesPage } from "./pages/DeliveriesPage";
 import { TransfersPage } from "./pages/TransfersPage";
+import { MoveHistoryPage } from "./pages/MoveHistoryPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function App() {
@@ -104,6 +105,16 @@ export function App() {
                 >
                   Transfers & Adjustments
                 </button>
+                <button
+                  onClick={() => navigate("moves")}
+                  className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                    currentPage === "moves"
+                      ? "bg-primary text-white"
+                      : "text-primary-muted hover:text-primary hover:bg-background-subtle"
+                  }`}
+                >
+                  Move History
+                </button>
               </nav>
             )}
           </div>
@@ -179,13 +190,18 @@ export function App() {
                 <TransfersPage onNavigate={navigate} />
               </ProtectedRoute>
             )}
+            {currentPage === "moves" && (
+              <ProtectedRoute onRedirect={navigate}>
+                <MoveHistoryPage onNavigate={navigate} />
+              </ProtectedRoute>
+            )}
           </>
         )}
       </main>
 
       <footer className="border-t border-border pt-4 text-xs text-primary-muted flex justify-between">
         <span>StockSense • Append-Only Ledger ERP</span>
-        <span>Phase 6 — Internal Transfers & Stock Adjustments</span>
+        <span>Phase 7 — Move History & Ledger Audit</span>
       </footer>
     </div>
   );
