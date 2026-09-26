@@ -1,4 +1,5 @@
 import { router, publicProcedure } from "../trpc.js";
+import { authRouter } from "./auth.js";
 
 export const appRouter = router({
   health: publicProcedure.query(() => {
@@ -8,6 +9,7 @@ export const appRouter = router({
       service: "stocksense-api",
     };
   }),
+  auth: authRouter,
 });
 
 export type AppRouter = typeof appRouter;

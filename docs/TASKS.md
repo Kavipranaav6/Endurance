@@ -11,11 +11,11 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] CI workflow: lint + typecheck + build on PR
 
 ## Phase 1 — Auth
-- [ ] Signup (email, password, confirm password)
-- [ ] Login (id/email + password) → JWT access + refresh
-- [ ] Forgot password → OTP email → verify OTP → reset
-- [ ] Protected route wrapper on the frontend, redirect unauth'd users to Login
-- [ ] Redirect to Dashboard after login
+- [x] Signup (email, password, confirm password)
+- [x] Login (id/email + password) → JWT access + refresh
+- [x] Forgot password → OTP email → verify OTP → reset
+- [x] Protected route wrapper on the frontend, redirect unauth'd users to Login
+- [x] Redirect to Dashboard after login
 
 ## Phase 2 — Ledger engine
 - [ ] `StockMove` write path (validated, immutable once `done`)

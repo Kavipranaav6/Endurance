@@ -1,7 +1,9 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { appRouter } from "./routers/app.js";
+import { createContext } from "./trpc.js";
 
 export async function buildServer() {
   const server = Fastify({
@@ -11,8 +13,15 @@ export async function buildServer() {
   });
 
   await server.register(cors, {
-    origin: true,
+    origin: (origin, cb) => {
+      // Allow local dev origins
+      cb(null, true);
+    },
     credentials: true,
+  });
+
+  await server.register(cookie, {
+    secret: process.env.COOKIE_SECRET || "stocksense-cookie-secret-dev-2026",
   });
 
   server.get("/health", async () => {
@@ -28,7 +37,7 @@ export async function buildServer() {
     prefix: "/trpc",
     trpcOptions: {
       router: appRouter,
-      createContext: () => ({}),
+      createContext,
     },
   });
 
