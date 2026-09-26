@@ -31,13 +31,13 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Live update via WebSocket, no manual refresh
 
 ## Phase 4 — Receipts
-- [ ] List view with search by reference & contact
-- [ ] Kanban view toggle, grouped by status
-- [ ] New receipt form: supplier, schedule date, responsible (defaults to logged-in user)
-- [ ] Add/remove product lines with quantity
-- [ ] Validate → ledger IN move created, stock increases
-- [ ] Print, Cancel actions
-- [ ] Status badge: Draft / Ready / Done
+- [x] List view with search by reference & contact
+- [x] Kanban view toggle, grouped by status
+- [x] New receipt form: supplier, schedule date, responsible (defaults to logged-in user)
+- [x] Add/remove product lines with quantity
+- [x] Validate → ledger IN move created, stock increases
+- [x] Print, Cancel actions
+- [x] Status badge: Draft / Ready / Done
 
 ## Phase 5 — Delivery Orders
 - [ ] List + kanban, search by reference & contact

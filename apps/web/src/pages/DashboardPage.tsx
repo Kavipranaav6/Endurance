@@ -192,11 +192,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       <div className="pt-2">
         <OperationalWidgets
           summary={widgets}
-          onNavigateToMove={(id) => {
-            console.log("Navigating to move:", id);
+          onNavigateToMove={() => {
+            onNavigate("receipts");
           }}
           onNewReceipt={() => {
-            console.log("Quick action: New Receipt clicked");
+            onNavigate("receipts");
           }}
           onNewDelivery={() => {
             console.log("Quick action: New Delivery clicked");
