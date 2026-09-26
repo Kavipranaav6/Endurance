@@ -16,6 +16,8 @@ import {
   RefreshCw,
   ArrowRight,
   ShieldAlert,
+  RotateCcw,
+  XCircle,
 } from "lucide-react";
 import {
   CreateProductInput,
@@ -48,6 +50,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     items: any[];
   }>({ count: 0, items: [] });
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,6 +76,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
   // Fetch all settings data
   const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    setFetchError(null);
     try {
       const [prods, whs, locs, alerts] = await Promise.all([
         trpcCall<any[]>("settings.listProducts", "query"),
@@ -87,8 +92,12 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       setWarehouses(whs || []);
       setLocations(locs || []);
       setLowStockSummary(alerts || { count: 0, items: [] });
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Error fetching settings data:", err);
+      setFetchError(
+        err?.message ||
+          "Failed to load master configuration data. Please check server connection."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -270,7 +279,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={() => fetchData()}
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-text-muted hover:text-text-primary bg-surface-card border border-border-default rounded-lg hover:bg-surface-elevated transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-text-muted hover:text-text-primary bg-surface-card border border-border-default rounded-lg hover:bg-surface-elevated transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
             Refresh
@@ -278,13 +287,30 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         </div>
       </div>
 
-      {/* Success Banner */}
+      {/* Error Alert Retry Banner */}
+      {fetchError && (
+        <div className="p-3.5 bg-status-danger/10 border border-status-danger/30 rounded-lg flex items-center justify-between gap-3 text-status-danger text-xs animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{fetchError}</span>
+          </div>
+          <button
+            onClick={() => fetchData()}
+            className="flex items-center gap-1 px-3 py-1 bg-status-danger text-white rounded font-medium hover:bg-status-danger/90 transition-colors shrink-0 cursor-pointer"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Success Notification Banner */}
       {actionMessage && (
         <div className="p-3 bg-brand-primary/10 border border-brand-primary/30 text-brand-primary rounded-lg text-sm flex items-center justify-between animate-in fade-in duration-200">
           <span>{actionMessage}</span>
           <button
             onClick={() => setActionMessage(null)}
-            className="text-xs font-semibold hover:underline"
+            className="text-xs font-semibold hover:underline cursor-pointer"
           >
             Dismiss
           </button>
@@ -298,7 +324,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             setActiveTab("products");
             setSearchQuery("");
           }}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
             activeTab === "products"
               ? "border-brand-primary text-brand-primary font-semibold"
               : "border-transparent text-text-muted hover:text-text-primary"
@@ -316,7 +342,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             setActiveTab("warehouses");
             setSearchQuery("");
           }}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
             activeTab === "warehouses"
               ? "border-brand-primary text-brand-primary font-semibold"
               : "border-transparent text-text-muted hover:text-text-primary"
@@ -334,7 +360,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             setActiveTab("locations");
             setSearchQuery("");
           }}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
             activeTab === "locations"
               ? "border-brand-primary text-brand-primary font-semibold"
               : "border-transparent text-text-muted hover:text-text-primary"
@@ -352,7 +378,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             setActiveTab("alerts");
             setSearchQuery("");
           }}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
             activeTab === "alerts"
               ? "border-status-danger text-status-danger font-semibold"
               : "border-transparent text-text-muted hover:text-text-primary"
@@ -388,7 +414,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-3 py-2 bg-surface-input border border-border-default rounded-lg text-sm text-text-primary focus:outline-hidden focus:border-brand-primary transition-colors"
+                  className="px-3 py-2 bg-surface-input border border-border-default rounded-lg text-sm text-text-primary focus:outline-hidden focus:border-brand-primary transition-colors cursor-pointer"
                 >
                   <option value="ALL">All Categories</option>
                   {categories.map((c) => (
@@ -402,14 +428,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
             <button
               onClick={() => setProductModal({ isOpen: true, product: null })}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Product
             </button>
           </div>
 
-          {/* Dense Products Table */}
+          {/* Dense Products Table with Skeletons */}
           <div className="overflow-x-auto bg-surface-card rounded-xl border border-border-default shadow-xs">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-elevated/60 text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle">
@@ -425,10 +451,83 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle font-normal">
-                {filteredProducts.length === 0 ? (
+                {isLoading ? (
+                  [...Array(5)].map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-16" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-40" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-20" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-12" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-10 ml-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-10 ml-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="h-4 bg-surface-elevated rounded w-16 mx-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-12 ml-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-text-muted">
-                      No products found matching your filters.
+                    <td colSpan={8} className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center text-text-muted space-y-2">
+                        <Package className="w-8 h-8 text-text-muted/60" />
+                        {products.length === 0 ? (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Products in Master Catalog
+                            </p>
+                            <p className="text-xs text-text-muted max-w-sm">
+                              Create your first product to establish tracking, opening inventory balances, and automated reorder rules.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() =>
+                                  setProductModal({ isOpen: true, product: null })
+                                }
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:bg-brand-primary/90 transition-colors shadow-xs cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                Create First Product
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Products Match Your Filters
+                            </p>
+                            <p className="text-xs text-text-muted max-w-sm">
+                              Try clearing your search query or switching to all categories.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() => {
+                                  setSearchQuery("");
+                                  setCategoryFilter("ALL");
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-elevated border border-border-default text-xs font-medium text-text-primary rounded-lg hover:bg-surface-elevated/80 transition-colors cursor-pointer"
+                              >
+                                <XCircle className="w-3.5 h-3.5 text-text-muted" />
+                                Reset Product Filters
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -478,14 +577,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                                 setProductModal({ isOpen: true, product: p })
                               }
                               title="Edit Product"
-                              className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors"
+                              className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDeleteProduct(p.id, p.name)}
                               title="Delete Product"
-                              className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors"
+                              className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -520,14 +619,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               onClick={() =>
                 setWarehouseModal({ isOpen: true, warehouse: null })
               }
-              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Warehouse
             </button>
           </div>
 
-          {/* Dense Warehouses Table */}
+          {/* Dense Warehouses Table with Skeletons */}
           <div className="overflow-x-auto bg-surface-card rounded-xl border border-border-default shadow-xs">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-elevated/60 text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle">
@@ -540,10 +639,74 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
-                {filteredWarehouses.length === 0 ? (
+                {isLoading ? (
+                  [...Array(3)].map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-16" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-36" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-48" />
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="h-4 bg-surface-elevated rounded w-16 mx-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-12 ml-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredWarehouses.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-text-muted">
-                      No warehouses found.
+                    <td colSpan={5} className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center text-text-muted space-y-2">
+                        <Building2 className="w-8 h-8 text-text-muted/60" />
+                        {warehouses.length === 0 ? (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Warehouses Configured
+                            </p>
+                            <p className="text-xs text-text-muted max-w-sm">
+                              Add a physical facility or regional distribution center to organize storage zones.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() =>
+                                  setWarehouseModal({
+                                    isOpen: true,
+                                    warehouse: null,
+                                  })
+                                }
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:bg-brand-primary/90 transition-colors shadow-xs cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                Create First Warehouse
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Warehouses Match Search Query
+                            </p>
+                            <p className="text-xs text-text-muted">
+                              Try clearing your search terms.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() => setSearchQuery("")}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-elevated border border-border-default text-xs font-medium text-text-primary rounded-lg hover:bg-surface-elevated/80 transition-colors cursor-pointer"
+                              >
+                                <XCircle className="w-3.5 h-3.5 text-text-muted" />
+                                Clear Search
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -573,14 +736,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                               setWarehouseModal({ isOpen: true, warehouse: w })
                             }
                             title="Edit Warehouse"
-                            className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors"
+                            className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteWarehouse(w.id, w.name)}
                             title="Delete Warehouse"
-                            className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors"
+                            className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -614,7 +777,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               <select
                 value={warehouseFilter}
                 onChange={(e) => setWarehouseFilter(e.target.value)}
-                className="px-3 py-2 bg-surface-input border border-border-default rounded-lg text-sm text-text-primary focus:outline-hidden focus:border-brand-primary transition-colors"
+                className="px-3 py-2 bg-surface-input border border-border-default rounded-lg text-sm text-text-primary focus:outline-hidden focus:border-brand-primary transition-colors cursor-pointer"
               >
                 <option value="ALL">All Warehouses</option>
                 {warehouses.map((wh) => (
@@ -627,14 +790,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
             <button
               onClick={() => setLocationModal({ isOpen: true, location: null })}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Location
             </button>
           </div>
 
-          {/* Dense Locations Table */}
+          {/* Dense Locations Table with Skeletons */}
           <div className="overflow-x-auto bg-surface-card rounded-xl border border-border-default shadow-xs">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-elevated/60 text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle">
@@ -646,10 +809,74 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
-                {filteredLocations.length === 0 ? (
+                {isLoading ? (
+                  [...Array(4)].map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-16" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-36" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-28" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-12 ml-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredLocations.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-4 py-8 text-center text-text-muted">
-                      No storage locations found.
+                    <td colSpan={4} className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center text-text-muted space-y-2">
+                        <MapPin className="w-8 h-8 text-text-muted/60" />
+                        {locations.length === 0 ? (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Storage Locations Configured
+                            </p>
+                            <p className="text-xs text-text-muted max-w-sm">
+                              Define internal aisles, racks, and bins within your warehouses to direct putaways and picks.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() =>
+                                  setLocationModal({
+                                    isOpen: true,
+                                    location: null,
+                                  })
+                                }
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-primary text-white text-xs font-medium rounded-lg hover:bg-brand-primary/90 transition-colors shadow-xs cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                Create First Location
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-text-primary">
+                              No Locations Match Your Filters
+                            </p>
+                            <p className="text-xs text-text-muted">
+                              Try clearing your search query or warehouse filter.
+                            </p>
+                            <div className="pt-2">
+                              <button
+                                onClick={() => {
+                                  setSearchQuery("");
+                                  setWarehouseFilter("ALL");
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-elevated border border-border-default text-xs font-medium text-text-primary rounded-lg hover:bg-surface-elevated/80 transition-colors cursor-pointer"
+                              >
+                                <XCircle className="w-3.5 h-3.5 text-text-muted" />
+                                Reset Location Filters
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -677,14 +904,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                               setLocationModal({ isOpen: true, location: l })
                             }
                             title="Edit Location"
-                            className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors"
+                            className="p-1.5 text-text-muted hover:text-brand-primary hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteLocation(l.id, l.name)}
                             title="Delete Location"
-                            className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors"
+                            className="p-1.5 text-text-muted hover:text-status-danger hover:bg-surface-elevated rounded-md transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -702,42 +929,49 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       {/* --- TAB 4: LOW STOCK ALERTS --- */}
       {activeTab === "alerts" && (
         <div className="space-y-4">
-          {/* Summary Box */}
-          <div className="p-4 rounded-xl bg-status-danger/10 border border-status-danger/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-status-danger/20 text-status-danger">
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-text-primary">
-                  Critical Low Stock Alert Monitor
-                </h3>
-                <p className="text-xs text-text-muted mt-0.5">
-                  Real-time alerts triggered when on-hand quantity falls below or matches the minimum reorder threshold.
-                </p>
-              </div>
+          {/* Summary Box with Skeleton */}
+          {isLoading ? (
+            <div className="p-4 rounded-xl bg-surface-card border border-border-default animate-pulse flex items-center justify-between">
+              <div className="h-5 bg-surface-elevated rounded w-64" />
+              <div className="h-8 bg-surface-elevated rounded w-28" />
             </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-xs text-text-muted">Total Low Items</div>
-                <div className="text-xl font-bold text-status-danger">
-                  {lowStockSummary.count}
+          ) : (
+            <div className="p-4 rounded-xl bg-status-danger/10 border border-status-danger/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-status-danger/20 text-status-danger">
+                  <ShieldAlert className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Critical Low Stock Alert Monitor
+                  </h3>
+                  <p className="text-xs text-text-muted mt-0.5">
+                    Real-time alerts triggered when on-hand quantity falls below or matches the minimum reorder threshold.
+                  </p>
                 </div>
               </div>
-              {onNavigate && (
-                <button
-                  onClick={() => onNavigate("receipts")}
-                  className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0"
-                >
-                  Create Replenishment
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
 
-          {/* Alert Items Table */}
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xs text-text-muted">Total Low Items</div>
+                  <div className="text-xl font-bold text-status-danger">
+                    {lowStockSummary.count}
+                  </div>
+                </div>
+                {onNavigate && (
+                  <button
+                    onClick={() => onNavigate("receipts")}
+                    className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors shadow-xs shrink-0 cursor-pointer"
+                  >
+                    Create Replenishment
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Alert Items Table with Skeletons */}
           <div className="overflow-x-auto bg-surface-card rounded-xl border border-border-default shadow-xs">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-elevated/60 text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle">
@@ -752,7 +986,33 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
-                {lowStockSummary.items.length === 0 ? (
+                {isLoading ? (
+                  [...Array(3)].map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-16" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-36" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="h-4 bg-surface-elevated rounded w-24" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-10 ml-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-10 ml-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="h-4 bg-surface-elevated rounded w-16 ml-auto" />
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="h-4 bg-surface-elevated rounded w-20 mx-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : lowStockSummary.items.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center text-text-muted">
