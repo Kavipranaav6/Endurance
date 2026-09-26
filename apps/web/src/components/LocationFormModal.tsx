@@ -71,19 +71,19 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="relative w-full max-w-lg bg-surface-card border border-border-default rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-white border border-border rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-elevated/40">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-background-subtle">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-brand-primary/10 text-brand-primary border border-brand-primary/20">
+            <div className="p-2 rounded bg-accent/10 text-accent border border-accent/20">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-text-primary">
+              <h2 className="text-base font-semibold text-primary">
                 {isNew ? "Create Internal Location" : `Edit Location: ${location.name}`}
               </h2>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-primary-muted mt-0.5">
                 {isNew
                   ? "Define an aisle, rack, shelf, or bin inside a warehouse"
                   : "Update location details or warehouse association"}
@@ -93,7 +93,7 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-text-muted hover:text-text-primary rounded-lg hover:bg-surface-elevated transition-colors cursor-pointer"
+            className="p-1.5 text-primary-muted hover:text-primary rounded hover:bg-background transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -101,7 +101,7 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
 
         {/* Error Alert */}
         {error && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-medium">
+          <div className="mx-6 mt-4 p-3 rounded bg-red-50 border border-status-late/30 text-status-late text-xs font-medium">
             {error}
           </div>
         )}
@@ -119,13 +119,17 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
               id="loc-warehouse"
               value={warehouseId}
               onChange={(e) => setWarehouseId(e.target.value)}
-              className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors"
+              className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-colors"
             >
-              {warehouses.map((wh) => (
-                <option key={wh.id} value={wh.id}>
-                  {wh.name} ({wh.shortCode})
-                </option>
-              ))}
+              {warehouses.length === 0 ? (
+                <option value="" disabled>No warehouses configured</option>
+              ) : (
+                warehouses.map((wh) => (
+                  <option key={wh.id} value={wh.id}>
+                    {wh.name} ({wh.shortCode})
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -149,18 +153,18 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
           />
 
           {/* Footer Controls */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-primary-muted hover:text-primary border border-border rounded hover:bg-background-subtle transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-sm transition-colors cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded shadow-xs transition-colors cursor-pointer"
             >
               {isSubmitting ? "Saving..." : isNew ? "Create Location" : "Update Location"}
             </button>

@@ -13,3 +13,35 @@ body {
   color: #1A1A1A;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+@media print {
+  @page {
+    margin: 1.2cm;
+    size: auto;
+  }
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  header, footer, nav, .print\:hidden {
+    display: none !important;
+  }
+  .fixed {
+    position: static !important;
+    display: block !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .bg-background,
+  .bg-surface-card {
+    background: #FFFFFF !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

@@ -200,15 +200,20 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     <div className="flex flex-col space-y-1 text-left">
                       <label
                         htmlFor="prod-init-wh"
-                        className="text-[12px] text-primary-muted"
+                        className="text-[12px] text-primary-muted font-medium"
                       >
                         Target Warehouse
                       </label>
                       <select
                         id="prod-init-wh"
                         value={initialWarehouseId}
-                        onChange={(e) => setInitialWarehouseId(e.target.value)}
-                        className="h-9 px-2 text-xs bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent"
+                        onChange={(e) => {
+                          const whId = e.target.value;
+                          setInitialWarehouseId(whId);
+                          const matchingLocs = locations.filter((l) => l.warehouseId === whId);
+                          setInitialLocationId(matchingLocs[0]?.id || "");
+                        }}
+                        className="h-9 px-3 text-xs bg-white text-primary border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent"
                       >
                         {warehouses.map((w) => (
                           <option key={w.id} value={w.id}>
@@ -221,7 +226,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     <div className="flex flex-col space-y-1 text-left">
                       <label
                         htmlFor="prod-init-loc"
-                        className="text-[12px] text-primary-muted"
+                        className="text-[12px] text-primary-muted font-medium"
                       >
                         Destination Bin
                       </label>
@@ -229,14 +234,25 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         id="prod-init-loc"
                         value={initialLocationId}
                         onChange={(e) => setInitialLocationId(e.target.value)}
-                        className="h-9 px-2 text-xs bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent"
+                        className="h-9 px-3 text-xs bg-white text-primary border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent"
                       >
-                        {availableLocations.map((l) => (
-                          <option key={l.id} value={l.id}>
-                            {l.name}
+                        {availableLocations.length === 0 ? (
+                          <option value="" disabled>
+                            No storage bins in this warehouse
                           </option>
-                        ))}
+                        ) : (
+                          availableLocations.map((l) => (
+                            <option key={l.id} value={l.id}>
+                              {l.name}
+                            </option>
+                          ))
+                        )}
                       </select>
+                      {availableLocations.length === 0 && (
+                        <span className="text-[11px] text-status-waiting mt-0.5">
+                          Please create a location for this warehouse in Settings.
+                        </span>
+                      )}
                     </div>
                   </>
                 )}
@@ -248,14 +264,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-border rounded text-primary hover:bg-background-subtle transition-colors cursor-pointer"
+              className="px-4 py-2 border border-border rounded text-primary hover:bg-background-subtle transition-colors cursor-pointer text-xs font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-primary text-white font-medium rounded hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-medium rounded transition-colors cursor-pointer disabled:opacity-50 shadow-xs text-xs"
             >
               {isSubmitting
                 ? "Saving..."

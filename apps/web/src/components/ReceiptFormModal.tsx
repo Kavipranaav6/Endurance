@@ -431,9 +431,14 @@ export const ReceiptFormModal: React.FC<ReceiptFormModalProps> = ({
                 <select
                   id="receipt-warehouse"
                   value={warehouseId}
-                  onChange={(e) => setWarehouseId(e.target.value)}
+                  onChange={(e) => {
+                    const newWhId = e.target.value;
+                    setWarehouseId(newWhId);
+                    const matchingLocs = metadata.locations.filter((l) => l.warehouseId === newWhId);
+                    setToLocationId(matchingLocs[0]?.id || "");
+                  }}
                   disabled={isImmutable || !isNew}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed cursor-pointer"
                 >
                   {metadata.warehouses.map((w) => (
                     <option key={w.id} value={w.id}>
@@ -455,14 +460,25 @@ export const ReceiptFormModal: React.FC<ReceiptFormModalProps> = ({
                   value={toLocationId}
                   onChange={(e) => setToLocationId(e.target.value)}
                   disabled={isImmutable || !isNew}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed cursor-pointer"
                 >
-                  {availableLocations.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
+                  {availableLocations.length === 0 ? (
+                    <option value="" disabled>
+                      No locations found for this warehouse
                     </option>
-                  ))}
+                  ) : (
+                    availableLocations.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))
+                  )}
                 </select>
+                {availableLocations.length === 0 && (
+                  <span className="text-[11px] text-status-waiting mt-0.5">
+                    No putaway location found for this warehouse. Please add one in Settings.
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col space-y-1 text-left">

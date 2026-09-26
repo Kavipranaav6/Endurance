@@ -501,9 +501,15 @@ export const TransferFormModal: React.FC<TransferFormModalProps> = ({
                 <select
                   id="transfer-warehouse"
                   value={warehouseId}
-                  onChange={(e) => setWarehouseId(e.target.value)}
+                  onChange={(e) => {
+                    const newWhId = e.target.value;
+                    setWarehouseId(newWhId);
+                    const matchingLocs = metadata.locations.filter((l) => l.warehouseId === newWhId);
+                    setFromLocationId(matchingLocs[0]?.id || "");
+                    setToLocationId(matchingLocs[1]?.id || matchingLocs[0]?.id || "");
+                  }}
                   disabled={isImmutable || !isNew}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed cursor-pointer"
                 >
                   {metadata.warehouses.map((w) => (
                     <option key={w.id} value={w.id}>
@@ -527,7 +533,7 @@ export const TransferFormModal: React.FC<TransferFormModalProps> = ({
                   value={scheduleDate}
                   onChange={(e) => setScheduleDate(e.target.value)}
                   disabled={isImmutable}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -543,13 +549,19 @@ export const TransferFormModal: React.FC<TransferFormModalProps> = ({
                   value={fromLocationId}
                   onChange={(e) => setFromLocationId(e.target.value)}
                   disabled={isImmutable || !isNew}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed cursor-pointer"
                 >
-                  {availableLocations.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
+                  {availableLocations.length === 0 ? (
+                    <option value="" disabled>
+                      No locations found for this warehouse
                     </option>
-                  ))}
+                  ) : (
+                    availableLocations.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
@@ -565,14 +577,25 @@ export const TransferFormModal: React.FC<TransferFormModalProps> = ({
                   value={toLocationId}
                   onChange={(e) => setToLocationId(e.target.value)}
                   disabled={isImmutable || !isNew}
-                  className="h-9 px-3 text-sm text-primary bg-background border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed"
+                  className="h-9 px-3 text-sm text-primary bg-white border border-border rounded focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-background-subtle disabled:cursor-not-allowed cursor-pointer"
                 >
-                  {availableLocations.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
+                  {availableLocations.length === 0 ? (
+                    <option value="" disabled>
+                      No locations found for this warehouse
                     </option>
-                  ))}
+                  ) : (
+                    availableLocations.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))
+                  )}
                 </select>
+                {availableLocations.length === 0 && (
+                  <span className="text-[11px] text-status-waiting mt-0.5">
+                    No locations found for this warehouse. Please add locations in Settings.
+                  </span>
+                )}
               </div>
             </div>
 
