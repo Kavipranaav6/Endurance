@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { ReceiptsPage } from "./pages/ReceiptsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function App() {
@@ -45,16 +46,44 @@ export function App() {
     <div className="min-h-screen bg-background text-primary flex flex-col justify-between p-6">
       <header className="border-b border-border pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h1
-              onClick={() => navigate("dashboard")}
-              className="text-xl font-semibold tracking-tight text-primary cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              StockSense
-            </h1>
-            <span className="text-xs text-primary-muted border-l border-border pl-3">
-              Inventory Ledger ERP
-            </span>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3">
+              <h1
+                onClick={() => navigate("dashboard")}
+                className="text-xl font-semibold tracking-tight text-primary cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                StockSense
+              </h1>
+              <span className="text-xs text-primary-muted border-l border-border pl-3">
+                Inventory Ledger ERP
+              </span>
+            </div>
+
+            {/* Authenticated Navigation Tabs */}
+            {isAuthenticated && (
+              <nav className="flex items-center space-x-1 text-xs">
+                <button
+                  onClick={() => navigate("dashboard")}
+                  className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                    currentPage === "dashboard"
+                      ? "bg-primary text-white"
+                      : "text-primary-muted hover:text-primary hover:bg-background-subtle"
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => navigate("receipts")}
+                  className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                    currentPage === "receipts"
+                      ? "bg-primary text-white"
+                      : "text-primary-muted hover:text-primary hover:bg-background-subtle"
+                  }`}
+                >
+                  Receipts
+                </button>
+              </nav>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -113,13 +142,18 @@ export function App() {
                 <DashboardPage onNavigate={navigate} />
               </ProtectedRoute>
             )}
+            {currentPage === "receipts" && (
+              <ProtectedRoute onRedirect={navigate}>
+                <ReceiptsPage onNavigate={navigate} />
+              </ProtectedRoute>
+            )}
           </>
         )}
       </main>
 
       <footer className="border-t border-border pt-4 text-xs text-primary-muted flex justify-between">
-        <span>StockSense • Append-Only Ledger Engine</span>
-        <span>Phase 1 — Auth & Access Control</span>
+        <span>StockSense • Append-Only Ledger ERP</span>
+        <span>Phase 4 — Receipts & Putaway</span>
       </footer>
     </div>
   );

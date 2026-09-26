@@ -4,3 +4,4 @@ export * from "./product.js";
 export * from "./stockMove.js";
 export * from "./auth.js";
 export * from "./dashboard.js";
+export * from "./receipt.js";

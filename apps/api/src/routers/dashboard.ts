@@ -14,7 +14,7 @@ import {
 import { prisma } from "../lib/prisma.js";
 
 // Ensure initial realistic sample data is present in memory if DB is offline or empty
-function ensureSeedData() {
+export function ensureSeedData() {
   if (memoryWarehouses.length === 0) {
     memoryWarehouses.push(
       { id: "wh-main", name: "Main Warehouse", shortCode: "WH", address: "100 Logistics Blvd" },
