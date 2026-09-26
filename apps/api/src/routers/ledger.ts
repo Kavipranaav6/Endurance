@@ -14,6 +14,7 @@ import {
   memoryStockMoves,
 } from "../lib/ledger/derivedStock.js";
 import { prisma } from "../lib/prisma.js";
+import { ensureSeedData } from "./dashboard.js";
 
 export const ledgerRouter = router({
   createMove: publicProcedure
@@ -49,6 +50,7 @@ export const ledgerRouter = router({
         .optional()
     )
     .query(async ({ input }) => {
+      ensureSeedData();
       if (process.env.DATABASE_URL) {
         try {
           return await prisma.stockMove.findMany({

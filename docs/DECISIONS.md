@@ -49,3 +49,11 @@ Log deviations from `docs/ARCHITECTURE.md` or `docs/PLAN.md` here.
 - Ledger integration:
   - Transfers: Strictly writes `INTERNAL` moves through Phase 2 ledger engine (`createStockMove`, `transitionStockMove`) with reference `<WH>/INT/<0001>`. The derived stock engine confirms company-wide inventory total is conserved while location bins update.
   - Adjustments: Commits discrepancy deltas as immutable ledger `ADJUSTMENT` moves (`<WH>/ADJ/<0001>`), attributing surplus gains to `toLocationId` and deficit shrinkage to `fromLocationId`.
+
+## Phase 7 — Move History
+- Layout choices (Approved):
+  - Unified Ledger List Row: Option 1 (Dense Audit Ledger Row) with 44px (`h-11`) height, monospace bold reference, operation type pill (`IN`, `OUT`, `INTERNAL`, `ADJUSTMENT`), product & SKU, route (`from → to`), partner/contact, quantity, scheduled date with **overdue late highlighting** (`scheduleDate < today` rendered in red), and status badge.
+  - Unified Ledger Kanban Card: Option 1 (Structured ERP Movement Card) with top accent border, operation badge, product & route summary, quantity, and late alert flag.
+  - Detail Inspector: Read-only modal displaying the complete append-only ledger entry metadata, timestamps, and immutable ledger verification stamp.
+- Pure Ledger Query Architecture: Strictly consumes the Phase 2 `ledger.listMoves` and `ledger.getMoveById` tRPC endpoints without writing redundant queries against `StockMove`.
+- Multi-Product Reference Expansion: Every product movement record in a multi-line document renders as a distinct, individually auditable ledger line item sharing the master reference number.
