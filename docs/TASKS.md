@@ -18,11 +18,11 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Redirect to Dashboard after login
 
 ## Phase 2 — Ledger engine
-- [ ] `StockMove` write path (validated, immutable once `done`)
-- [ ] Reference generator: `<WarehouseCode>/<IN|OUT>/<zero-padded-id>`
-- [ ] Derived stock view: on-hand + free-to-use per product per location
-- [ ] WebSocket server broadcasts on every state transition
-- [ ] Postgres trigger/notify for low-stock threshold crossing
+- [x] `StockMove` write path (validated, immutable once `done`)
+- [x] Reference generator: `<WarehouseCode>/<IN|OUT>/<zero-padded-id>`
+- [x] Derived stock view: on-hand + free-to-use per product per location
+- [x] WebSocket server broadcasts on every state transition
+- [x] Postgres trigger/notify for low-stock threshold crossing
 
 ## Phase 3 — Dashboard
 - [ ] KPI tiles: total products, low/out of stock, pending receipts, pending deliveries,
