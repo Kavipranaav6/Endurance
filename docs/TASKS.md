@@ -47,10 +47,10 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Status badge: Draft / Waiting / Ready / Done
 
 ## Phase 6 — Transfers & Adjustments
-- [ ] Internal transfer form (from-location → to-location, product, quantity)
-- [ ] Transfer does not change total stock, only location
-- [ ] Adjustment form: select product/location, enter counted quantity
-- [ ] System computes delta vs. recorded quantity and logs it as a ledger entry
+- [x] Internal transfer form (from-location → to-location, product, quantity)
+- [x] Transfer does not change total stock, only location
+- [x] Adjustment form: select product/location, enter counted quantity
+- [x] System computes delta vs. recorded quantity and logs it as a ledger entry
 
 ## Phase 7 — Move History
 - [ ] Unified list of all ledger moves (reference, date, from, to, contact, quantity, status)
