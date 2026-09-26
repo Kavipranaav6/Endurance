@@ -25,11 +25,10 @@ Check items off as they land. Antigravity: update this file at the end of every 
 - [x] Postgres trigger/notify for low-stock threshold crossing
 
 ## Phase 3 — Dashboard
-- [ ] KPI tiles: total products, low/out of stock, pending receipts, pending deliveries,
-      scheduled transfers
-- [ ] Filters: doc type, status, warehouse/location, category
-- [ ] Receipt/Delivery widgets ("N to receive", "N to deliver") matching the wireframe
-- [ ] Live update via WebSocket, no manual refresh
+- [x] KPI tiles: total products, low/out of stock, pending receipts, pending deliveries, scheduled transfers
+- [x] Filters: doc type, status, warehouse/location, category
+- [x] Receipt/Delivery widgets ("N to receive", "N to deliver") matching the wireframe
+- [x] Live update via WebSocket, no manual refresh
 
 ## Phase 4 — Receipts
 - [ ] List view with search by reference & contact
