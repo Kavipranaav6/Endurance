@@ -5,6 +5,7 @@ import { dashboardRouter } from "./dashboard.js";
 import { receiptRouter } from "./receipt.js";
 import { deliveryRouter } from "./delivery.js";
 import { transferRouter, adjustmentRouter } from "./transfer.js";
+import { settingsRouter } from "./settings.js";
 
 export const appRouter = router({
   health: publicProcedure.query(() => {
@@ -21,6 +22,7 @@ export const appRouter = router({
   delivery: deliveryRouter,
   transfer: transferRouter,
   adjustment: adjustmentRouter,
+  settings: settingsRouter,
 });
 
 export type AppRouter = typeof appRouter;
